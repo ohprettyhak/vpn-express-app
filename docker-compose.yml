@@ -1,0 +1,24 @@
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 3000:3000
+    env_file:
+      - .env
+    volumes:
+      - ./gluetun:/gluetun
+    restart: always
+
+  vpn-express-app:
+    build:
+      context: ./app
+    container_name: vpn-express-app
+    depends_on:
+      - gluetun
+    network_mode: "service:gluetun"
+    env_file:
+      - ./app/.env
+    restart: always
